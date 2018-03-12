@@ -33,5 +33,16 @@ d_lambda_expected = 589e-9^2/0.6e-9;
 [amp,idx] = findpeaks(lwr_peakEnv);
 L = numel(data);
 d_x = 4*span*K/L;
-d_lambda = d_x*(max(idx)-min(idx))/numel(idx);
+d_lambda = d_x*(idx(23)-idx(4))/18;
+
+%white light coherence length
+load('day3-data\zpl_white_only_span_0_05_speed_0_001_start_pos_7_69_mar5_513.mat')
+data = data_white1;
+data = data - mean(data); 
+data = data/max(abs(data));
+[up_amp,up_idx] = findpeaks(data);
+[lwr_amp,lwr_idx] = findpeaks(-data);
+lwr_amp = -lwr_amp;
+
+plot(up_idx,up_amp,lwr_idx,lwr_amp)
 

@@ -36,3 +36,13 @@ span = 0.1e-3;
 figure
 plot((lambda), spec)
 xlim([200e-9 1200e-9])
+
+
+
+load([day3_data(1).folder '\zpl_span_3_speed_0_003_mar_5_414.mat']);
+span = 3e-3;
+[lambda, spec]  = getSpectrum(data2,K,span);
+
+figure
+plot((lambda), spec)
+xlim([200e-9 1200e-9])
