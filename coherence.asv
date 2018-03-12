@@ -27,11 +27,6 @@ wavelength = 4*span*K/numPeaks;
 
 
 
-%calculate beat frequency (wavelength diff)
+%calculate beat frequency (wavelenght diff)
 
 d_lambda_expected = 589e-9^2/0.6e-9;
-[amp,idx] = findpeaks(lwr_peakEnv);
-L = numel(data);
-d_x = 4*span*K/L;
-d_lambda = d_x*(max(idx)-min(idx))/numel(idx);
-

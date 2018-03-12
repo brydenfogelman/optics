@@ -11,7 +11,7 @@ fftdata_oneside = fftdata_oneside/max(fftdata_oneside);
 spec = fftdata_oneside;
 
 
-delta_x = 2*span*K/L;
+delta_x = 4*span*K/L;
 n=1:NFFT/2-1;
 lambda=NFFT*delta_x./n;
 
