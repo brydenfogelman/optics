@@ -1,0 +1,7 @@
+Using a git repo to have consistency between server and local computers.
+
+Need to manually copy files down from server (can't do push)
+
+scp -r bfogelman@tau.phas.ubc.ca:/home2/bfogelman/path-to-data ~/optics/P40840/new-path-in-dir
+
+BE CAREFUL TO NOT OVERRIDE
