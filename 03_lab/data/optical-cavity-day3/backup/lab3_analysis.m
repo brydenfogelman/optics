@@ -1,13 +1,125 @@
 data = dir('*.csv');
 close all
-for i = 1:numel(data)
-    filename = [data(i).folder '\' data(i).name];
-    [t,pd,piezo] = importfile(filename);    
-    pd = pd - min(pd);  %zero minimum
-    pd = pd/max(pd);    %normalize
-    figure
-    plot(t,pd)
-    [FWHM, idx] = fwhm(t,pd);
-    text(t(idx),0.5,num2str(FWHM))
-    title(data(i).name, 'Interpreter', 'none');
+% for i = 1:numel(data)
+%     filename = [data(i).folder '\' data(i).name];
+%     [tt,pd,piezo] = importfile(filename);
+%     t = linspace(tt(1),tt(end),2500);
+%    
+%     
+%     pd = pd - min(pd);  %zero minimum
+%     pd = pd/max(pd);    %normalize
+%     figure
+%     plot(t,pd)
+%     [FWHM, idx] = fwhm(t,pd);
+%     text(t(idx),0.5,num2str(FWHM))
+%     title(data(i).name, 'Interpreter', 'none');
+% end
+
+%% 14cm cavity
+data = dir('*L14*.csv');
+
+filename = [data(1).folder '\' data(1).name];
+[tt,pd,piezo] = importfile(filename);
+t = linspace(tt(1),tt(end),2500)';  
+pd = pd - min(pd);  %zero minimum
+pd = pd/max(pd);    %normalize
+figure
+plot(t,pd)
+[FWHM, idx] = fwhm(t,pd);
+text(t(idx),0.5,num2str(FWHM))
+title(data(1).name, 'Interpreter', 'none');
+
+
+filename = [data(2).folder '\' data(2).name];
+[tt,pd,piezo] = importfile(filename);
+t = linspace(tt(1),tt(end),2500)';  
+pd = pd - min(pd);  %zero minimum
+pd = pd/max(pd);    %normalize
+figure
+plot(t,pd,t,piezo)
+title(data(2).name, 'Interpreter', 'none');
+ramps = findRampIndices(sgolayfilt(piezo,5,1001));
+t_trunc = t(ramps(1):ramps(2));
+piezo_trunc = piezo(ramps(1):ramps(2));
+figure
+plot(t_trunc,piezo_trunc)
+dvdt = calc_dv_dt(t_trunc,piezo_trunc);
+dxdv = 11.6e-6/100; %m/V, from datasheet
+dxdt = dvdt*dxdv;
+peak_spacing_t = (0.001312 + 0.000538)/2;
+FSR = peak_spacing_t*dxdt;
+FWHM_x = FWHM*dxdt;
+finesse = FSR/FWHM_x;
+
+clear
+close all
+
+%% 23cm cavity
+data = dir('*L23*.csv');
+
+filename = [data(2).folder '\' data(2).name];
+[tt,pd,piezo] = importfile(filename);
+t = linspace(tt(1),tt(end),2500)';  
+pd = pd - min(pd);  %zero minimum
+pd = pd/max(pd);    %normalize
+figure
+plot(t,pd)
+[FWHM, idx] = fwhm(t,pd);
+text(t(idx),0.5,num2str(FWHM))
+title(data(1).name, 'Interpreter', 'none');
+
+
+filename = [data(1).folder '\' data(1).name];
+[tt,pd,piezo] = importfile(filename);
+t = linspace(tt(1),tt(end),2500)';  
+pd = pd - min(pd);  %zero minimum
+pd = pd/max(pd);    %normalize
+figure
+plot(t,pd,t,piezo)
+title(data(2).name, 'Interpreter', 'none');
+ramps = [861 1559];
+t_trunc = t(ramps(1):ramps(2));
+piezo_trunc = piezo(ramps(1):ramps(2));
+figure
+plot(t,piezo,t_trunc,piezo_trunc)
+dvdt = calc_dv_dt(t_trunc,piezo_trunc);
+dxdv = 11.6e-6/100; %m/V, from datasheet
+dxdt = dvdt*dxdv;
+peak_spacing_t = ((t(1474)-t(1021))/2 + (t(696)-t(240))/2)/2;
+FSR = peak_spacing_t*dxdt;
+FWHM_x = FWHM*dxdt;
+finesse = FSR/FWHM_x;
+
+
+
+
+
+
+
+function ramps = findRampIndices(filtSig)
+    discardFraction = .10; %discard 10% of signal near peaks
+    [~,peakIndex] = findpeaks(filtSig);
+    [~,troughIndex] = findpeaks(-filtSig);
+    peaks = sort([peakIndex troughIndex]);
+    ramps = zeros((numel(peaks)-1),2);
+    removeList = [];
+    for i = 1:(numel(peaks)-1)
+        L = peaks(i+1) - peaks(i);
+        if L < 50%make sure two peaks aren't two close toghether (could be false)
+            removeList = [removeList i]; 
+        else
+            ramps(i,1) = peaks(i)+floor(L*discardFraction);
+            ramps(i,2) = peaks(i+1)-floor(L*discardFraction);
+        end
+    end
+    ramps(removeList,:) = [];
+    maxL = max(ramps(:,2)-ramps(:,1));
+    removeList = maxL > 1.2*(ramps(:,2)-ramps(:,1));
+    ramps(removeList,:) = [];
+end
+
+
+function dVdt = calc_dv_dt(t,I)
+    p = polyfit(t,I,1);
+    dVdt = p(1);
 end
