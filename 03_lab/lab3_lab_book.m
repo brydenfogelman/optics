@@ -29,22 +29,46 @@ P_I = 6.63e-3; %W
 % P_M1_ref = 5.93e-3; %W
 
 % ^above measurements use wrong side of mirror (not shiny side)
+
+% ------------ %
+% FIRST MIRROR %
+% ------------ %
+
 % M1 Transmitted Power = 77 \pm 1 \mu W
 P_M1_trans = 77.5e-6;  %W
 %  M1 Relected Power = 6.43  \pm .05 $mW
 P_M1_ref = 6.43e-3; %W
 %  Reflection coefficient
-R_M1 = P_M1_ref/P_I;
+R_M1 = P_M1_ref/P_I
+delta_R_M1 = (0.05e-3 / P_M1_ref + 0.015e-3 / P_I) * R_M1
 % Transmission Coefficient
-T_M1 = P_M1_trans/P_I;
-one = T_M1+R_M1%Should add to 1
+T_M1 = P_M1_trans/P_I
+delta_T_M1 = (1e-6 / P_M1_trans + 0.015e-3 / P_I) * T_M1
+
+%Should add to 1
+T_M1 + R_M1
+
+
+% ------------- %
+% SECOND MIRROR %
+% ------------- %
 
 %  M2 Transmitted Power = 124 \pm 1 \mu W
 P_M2_trans = 124e-6; %W
 %  M2 Reflected Power = 6.35 \pm .01 mW
 P_M2_ref = 6.35e-3; %W
 %  Reflection coefficient
-R_M2 = P_M2_ref/P_I;
+R_M2 = P_M2_ref/P_I
+delta_R_M2 = (0.01e-3 / P_M2_ref + 0.015e-3 / P_I) * R_M2
 % Transmission Coefficient
-T_M2 = P_M2_trans/P_I;
-one = (T_M2+R_M2)%Should add to 1
+T_M2 = P_M2_trans/P_I
+delta_T_M1 = (1e-6 / P_M2_trans + 0.015e-3 / P_I) * T_M2
+
+% Should add to 1
+T_M2 + R_M2
+
+%% Estimated Finesse
+
+r = sqrt(R_M1 * R_M2);
+
+F = pi * sqrt(r) / (1 - r)
