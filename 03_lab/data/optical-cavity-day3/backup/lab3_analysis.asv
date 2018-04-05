@@ -1,0 +1,13 @@
+data = dir('*.csv');
+close all
+for i = 1:numel(data)
+    filename = [data(i).folder '\' data(i).name];
+    [t,pd,piezo] = importfile(filename);    
+    pd = pd - min(pd);  %zero minimum
+    pd = pd/max(pd);    %normalize
+    figure
+    plot(t,pd)
+    FWHM = fwhm(t,pd);
+    text(max(t)/2,0.5,
+    title(data(i).name, 'Interpreter', 'none');
+end
