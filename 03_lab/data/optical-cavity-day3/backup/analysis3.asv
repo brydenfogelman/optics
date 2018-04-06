@@ -1,0 +1,17 @@
+load('finesseData.mat')
+
+figure
+errorbar(L,finesse,delta_fin,'k.')
+title({'Finesse wrt Cavity Length'},'Interpreter','latex');
+xlabel('$L_{cav}$ (m)','Interpreter','latex');
+ylabel('$\mathcal{F}$','Interpreter','latex');
+
+FSR = 3e8/2./(L*1e-2);
+linewidths = FSR./finesse;
+delta_linewidths = FSR./(finesse.^2).*delta_fin;
+
+figure
+errorbar(L,linewidths,delta_linewidths,'k.')
+title({'Photodiode Signal ($L_{cav} = 3$cm)'},'Interpreter','latex');
+xlabel('$L_{cav}$ (m)','Interpreter','latex');
+ylabel('$\mathcal{F}$','Interpreter','latex');

@@ -91,6 +91,44 @@ FWHM_x = FWHM*dxdt;
 finesse = FSR/FWHM_x;
 
 
+%% 23cm cavity
+data = dir('*L23*.csv');
+
+filename = [data(2).folder '\' data(2).name];
+[tt,pd,piezo] = importfile(filename);
+t = linspace(tt(1),tt(end),2500)';  
+pd = pd - min(pd);  %zero minimum
+pd = pd/max(pd);    %normalize
+figure
+plot(t,pd)
+[FWHM, idx] = fwhm(t,pd);
+text(t(idx),0.5,num2str(FWHM))
+title(data(1).name, 'Interpreter', 'none');
+
+
+filename = [data(1).folder '\' data(1).name];
+[tt,pd,piezo] = importfile(filename);
+t = linspace(tt(1),tt(end),2500)';  
+pd = pd - min(pd);  %zero minimum
+pd = pd/max(pd);    %normalize
+figure
+plot(t,pd,t,piezo)
+title(data(2).name, 'Interpreter', 'none');
+ramps = [861 1559];
+t_trunc = t(ramps(1):ramps(2));
+piezo_trunc = piezo(ramps(1):ramps(2));
+figure
+plot(t,piezo,t_trunc,piezo_trunc)
+dvdt = calc_dv_dt(t_trunc,piezo_trunc);
+dxdv = 11.6e-6/100; %m/V, from datasheet
+dxdt = dvdt*dxdv;
+peak_spacing_t = ((t(1474)-t(1021))/2 + (t(696)-t(240))/2)/2;
+FSR = peak_spacing_t*dxdt;
+calcFSR = 632e-9/2;
+calibConst = calcFSR/FSR;
+FWHM_x = FWHM*dxdt;
+finesse = FSR/FWHM_x;
+
 
 
 
