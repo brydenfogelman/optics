@@ -28,9 +28,9 @@ Q = q.*finesse;
 dQ = q.*delta_fin;
 expQ = x*1e-2/lambda_2*expF;
 figure
-errorbar(L,Q/1e6,dQ/1e6,'k.')
+errorbar(L,Q,dQ,'k.')
 hold on
-plot(x,expQ/1e6,'r--')
+plot(x,expQ,'r--')
 title({'Quality wrt Cavity Length'},'Interpreter','latex');
 xlabel('$L_{cav}$ (cm)','Interpreter','latex');
 ylabel('Linewidth (MHz)','Interpreter','latex');
